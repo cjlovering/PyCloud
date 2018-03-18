@@ -54,7 +54,7 @@ class Hogwild(object):
     def __init__(self, *args, **kwargs) -> None:
         pass
 
-    def train(self, model_class: nn.Module, train) -> nn.Module:
+    def train(self, args, model_class: nn.Module, train) -> nn.Module:
         """Trains a model locally using Hogwild!
 
         Args:
@@ -94,4 +94,4 @@ class Hogwild(object):
 if __name__ == '__main__':
     args = parser.parse_args()
     local_distributed =  Hogwild()
-    local_distributed.train(Net, train)
+    local_distributed.train(args, Net, train)
