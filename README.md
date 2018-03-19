@@ -10,6 +10,24 @@ pip install -r requirements.txt
 
 ```
 
+## Running
+
+Full evaluation (for local hogwild).
+
+```bash
+
+./evaluate.sh
+
+```
+
+Running one 'execution'.
+
+```bash
+
+python3 hogwild/main.py --epochs 3
+
+```
+
 ## Credits
 
 We implement and adapt methods from the following publications:
