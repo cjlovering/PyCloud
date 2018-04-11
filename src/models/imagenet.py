@@ -58,6 +58,7 @@ parser.add_argument('--dist-backend', default='gloo', type=str,
 
 best_prec1 = 0
 
+class ImageNet()
 
 def main():
     global args, best_prec1
