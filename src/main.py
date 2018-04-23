@@ -71,12 +71,12 @@ class Evaluate(object):
 
         start = timer()
 
-        # model = model_class()
         model = train(args=args, model_class=model_class)
-        acc, loss = evaluate(args, model)
 
         end = timer()
         t = end - start
+
+        acc, loss = evaluate(args, model)
 
         return '{} {} {}'.format(acc, loss, t)
 
@@ -84,9 +84,12 @@ if __name__ == '__main__':
     # Training settings
     args = get_args()
 
+    def placeholder(args, model):
+        return 0.
+
     eval = Evaluate()
     tasks = [
-        ('SNLI', SNLINet, train_snli, evaluate_mnist),    # TODO: evaluate SNLI dataset.
+        ('SNLI', SNLINet, train_snli, placeholder),    # TODO: evaluate SNLI dataset.
         ('MNIST', MnistNet, train_mnist, evaluate_mnist)
     ]
 
