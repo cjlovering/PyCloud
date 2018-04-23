@@ -6,25 +6,17 @@ Predicates the best VM for a machine learning model workload.
 
 ```bash
 
-pip install -r requirements.txt
+./prepare.sh
 
 ```
 
 ## Running
 
-Full evaluation (for local hogwild).
+Evaluate on current VM.
 
 ```bash
 
 ./evaluate.sh
-
-```
-
-Running one 'execution'.
-
-```bash
-
-python3 hogwild/main.py --epochs 3
 
 ```
 
