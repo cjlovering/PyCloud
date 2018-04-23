@@ -1,2 +1,2 @@
-from .mnist import Net as MnistNet
+from .mnist import MnistNet
 from .snli import SNLINet

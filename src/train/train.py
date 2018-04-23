@@ -5,10 +5,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torchvision import datasets, transforms
 
-def train(rank, args, model):
-
-    torch.manual_seed(args.seed + rank)
-
+def train_mnist(args, model):
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('data', train=True, download=True,
                     transform=transforms.Compose([
@@ -22,7 +19,6 @@ def train(rank, args, model):
                         transforms.Normalize((0.1307,), (0.3081,))
                     ])),
         batch_size=args.batch_size, shuffle=True, num_workers=1)
-
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
     for epoch in range(1, args.epochs + 1):
         train_epoch(epoch, args, model, train_loader, optimizer)
@@ -46,7 +42,7 @@ def train_epoch(epoch, args, model, data_loader, optimizer):
                 100. * batch_idx / len(data_loader), loss.data[0]))
 
 
-def evaluate(args, model):
+def evaluate_mnist(args, model):
     test_loader = torch.utils.data.DataLoader(
         datasets.MNIST('data', train=False, transform=transforms.Compose([
                         transforms.ToTensor(),

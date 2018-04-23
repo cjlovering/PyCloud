@@ -1,4 +1,4 @@
 from .models import MnistNet
-from .models import SnliNet
+from .models import SNLINet
 
 from .cloud import Controller
