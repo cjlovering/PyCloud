@@ -9,7 +9,7 @@ import torch.multiprocessing as mp
 import os
 from argparse import ArgumentParser
 
-from train import train_mnist, evaluate_mnist
+from train import train_mnist, evaluate_mnist, train_snli
 
 from timeit import default_timer as timer
 
@@ -71,8 +71,8 @@ class Evaluate(object):
 
         start = timer()
 
-        model = model_class()
-        train(args=args, model=model)
+        # model = model_class()
+        model = train(args=args, model_class=model_class)
         acc, loss = evaluate(args, model)
 
         end = timer()
@@ -85,11 +85,12 @@ if __name__ == '__main__':
     args = get_args()
 
     eval = Evaluate()
-    print(args)
-    iterations = 3
-    tasks = [('MNIST', MnistNet, train_mnist, evaluate_mnist)]
+    tasks = [
+        ('SNLI', SNLINet, train_snli, evaluate_mnist),    # TODO: evaluate SNLI dataset.
+        ('MNIST', MnistNet, train_mnist, evaluate_mnist)
+    ]
 
     for task in tasks:
-        task_title, model, train, evaluate = task
-        result = eval.train(args, model, train, evaluate)
+        task_title, model_class, train, evaluate = task
+        result = eval.train(args, model_class, train, evaluate)
         print("{}, {}".format(task_title, result))  # TODO: log or store results, etc

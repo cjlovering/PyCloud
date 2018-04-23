@@ -2,6 +2,7 @@ import os
 import time
 import glob
 
+from argparse import ArgumentParser
 
 import torch
 import torch.optim as O
@@ -10,9 +11,9 @@ import torch.nn as nn
 from torchtext import data
 from torchtext import datasets
 
-def train(model):
-    args = get_args()
-    torch.cuda.set_device(args.gpu)
+def train_snli(args, model_class):
+    if torch.cuda.is_available():
+        torch.cuda.set_device(args.gpu)
 
     inputs = data.Field(lower=args.lower)
     answers = data.Field(sequential=False)
@@ -39,7 +40,7 @@ def train(model):
     if config.birnn:
         config.n_cells *= 2
 
-    SNLIClassifier(config)
+    model = model_class(config=config)
     if args.word_vectors:
         model.embed.weight.data = inputs.vocab.vectors
         model.cuda()
@@ -54,7 +55,8 @@ def train(model):
     header = 'Time Epoch Iteration Progress    (%Epoch)   Loss   Dev/Loss     Accuracy  Dev/Accuracy'
     dev_log_template = ' '.join('{:>6.0f},{:>5.0f},{:>9.0f},{:>5.0f}/{:<5.0f} {:>7.0f}%,{:>8.6f},{:8.6f},{:12.4f},{:12.4f}'.split(','))
     log_template =     ' '.join('{:>6.0f},{:>5.0f},{:>9.0f},{:>5.0f}/{:<5.0f} {:>7.0f}%,{:>8.6f},{},{:12.4f},{}'.split(','))
-    print(header)
+    if not args.capture_results:
+        print(header)
 
     for epoch in range(args.epochs):
         train_iter.init_epoch()
@@ -63,7 +65,6 @@ def train(model):
 
             # switch model to training mode, clear gradient accumulators
             model.train(); opt.zero_grad()
-
             iterations += 1
 
             # forward pass
@@ -76,7 +77,12 @@ def train(model):
 
             # calculate loss of the network output with respect to training labels
             loss = criterion(answer, batch.label)
-
             # backpropagate and update optimizer learning rate
             loss.backward(); opt.step()
+
+            if not args.capture_results and iterations % args.log_every == 0:
+                print(log_template.format(time.time()-start,
+                    epoch, iterations, 1+batch_idx, len(train_iter),
+                    100. * (1+batch_idx) / len(train_iter), loss.data[0], ' '*8, n_correct/n_total*100, ' '*12))
+
     return model

@@ -5,7 +5,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torchvision import datasets, transforms
 
-def train_mnist(args, model):
+def train_mnist(args, model_class):
+    model = model_class()
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('data', train=True, download=True,
                     transform=transforms.Compose([
@@ -25,6 +26,7 @@ def train_mnist(args, model):
         if not args.capture_results:
           # skip this when timing
           test_epoch(args, model, test_loader)
+    return model
 
 def train_epoch(epoch, args, model, data_loader, optimizer):
     model.train()
