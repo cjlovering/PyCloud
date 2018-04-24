@@ -29,8 +29,10 @@ def train_snli(args, model_class):
             torch.save(inputs.vocab.vectors, args.vector_cache)
     answers.build_vocab(train)
 
-    train_iter, dev_iter, test_iter = data.BucketIterator.splits((train, dev, test), batch_size=args.batch_size, device=args.gpu)
-
+    if torch.cuda.is_available():
+        train_iter, dev_iter, test_iter = data.BucketIterator.splits((train, dev, test), batch_size=args.batch_size, device=args.gpu)
+    else:
+        train_iter, dev_iter, test_iter = data.BucketIterator.splits((train, dev, test), batch_size=args.batch_size, device=-1)
     config = args
     config.n_embed = len(inputs.vocab)
     config.d_out = len(answers.vocab)
@@ -43,7 +45,8 @@ def train_snli(args, model_class):
     model = model_class(config=config)
     if args.word_vectors:
         model.embed.weight.data = inputs.vocab.vectors
-        model.cuda()
+        if torch.cuda.is_available():
+            model.cuda()
 
     criterion = nn.CrossEntropyLoss()
     opt = O.Adam(model.parameters(), lr=args.lr)
@@ -61,6 +64,7 @@ def train_snli(args, model_class):
     for epoch in range(args.epochs):
         train_iter.init_epoch()
         n_correct, n_total = 0, 0
+
         for batch_idx, batch in enumerate(train_iter):
 
             # switch model to training mode, clear gradient accumulators
