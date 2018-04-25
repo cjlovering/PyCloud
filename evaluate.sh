@@ -1,3 +1,3 @@
 #!/bin/bash
 mkdir -p results
-python3 src/main.py --capture-results True --epochs 1
+python3 src/main.py --epochs 1
