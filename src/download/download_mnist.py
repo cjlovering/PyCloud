@@ -4,6 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.autograd import Variable
 from torchvision import datasets, transforms
+from argparse import ArgumentParser
 
 def download_mnist(args):
     train_loader = torch.utils.data.DataLoader(
