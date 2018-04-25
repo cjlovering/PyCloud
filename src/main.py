@@ -50,6 +50,7 @@ def get_args():
                         help='how many batches to wait before logging training status')
     parser.add_argument('--capture-results', type=bool, default=False,
                         help='times each process (default: True)')
+    parser.add_argument('--restarts', type=int, default=1)
 
     args = parser.parse_args()
     return args
@@ -84,12 +85,13 @@ if __name__ == '__main__':
 
     eval = Evaluate()
     tasks = [
-        ('SNLI', SNLINet, train_snli),
-        ('MNIST', MnistNet, train_mnist)
+        ('MNIST', MnistNet, train_mnist),
+        ('SNLI', SNLINet, train_snli)
     ]
 
-    for task in tasks:
-        task_title, model_class, train = task
-        result = eval.train(args, model_class, train)
-        with open("results.csv", "a") as f:
-            f.write("{}, {}".format(task_title, result))
+    for _ in range(args.restarts):
+        for task in tasks:
+            task_title, model_class, train = task
+            result = eval.train(args, model_class, train)
+            with open("results.csv", "a") as f:
+                f.write("{}, {}".format(task_title, result))
