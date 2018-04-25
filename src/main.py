@@ -58,7 +58,7 @@ class Evaluate(object):
     def __init__(self, *args, **kwargs) -> None:
         pass
 
-    def train(self, args, model_class: nn.Module, train, evaluate) -> nn.Module:
+    def train(self, args, model_class: nn.Module, train) -> nn.Module:
         """Trains a model locally.
 
         Args:
@@ -76,24 +76,19 @@ class Evaluate(object):
         end = timer()
         t = end - start
 
-        acc, loss = evaluate(args, model)
-
-        return '{} {} {}'.format(acc, loss, t)
+        return t
 
 if __name__ == '__main__':
     # Training settings
     args = get_args()
 
-    def placeholder(args, model):
-        return 0.
-
     eval = Evaluate()
     tasks = [
-        ('SNLI', SNLINet, train_snli, placeholder),    # TODO: evaluate SNLI dataset.
-        ('MNIST', MnistNet, train_mnist, evaluate_mnist)
+        ('SNLI', SNLINet, train_snli),
+        ('MNIST', MnistNet, train_mnist)
     ]
 
     for task in tasks:
-        task_title, model_class, train, evaluate = task
-        result = eval.train(args, model_class, train, evaluate)
-        print("{}, {}".format(task_title, result))  # TODO: log or store results, etc
+        task_title, model_class, train = task
+        result = eval.train(args, model_class, train)
+        print("{}, {}".format(task_title, result)) # TODO: log or store results, etc
