@@ -79,7 +79,7 @@ def train_snli(args, model_class):
             n_total += batch.batch_size
             train_acc = n_correct/n_total
 
-            print((n_correct, n_total))
+            print((n_correct.item() / (n_total * 1.)))
 
             # calculate loss of the network output with respect to training labels
             loss = criterion(answer, batch.label)
