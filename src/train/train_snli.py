@@ -77,7 +77,8 @@ def train_snli(args, model_class):
             # calculate accuracy of predictions in the current batch
             n_correct += (torch.max(answer, 1)[1].view(batch.label.size()).data == batch.label.data).sum()
             n_total += batch.batch_size
-            train_acc = 100. * n_correct/n_total
+            train_acc = n_correct/n_total
+            print(train_acc)
 
             # calculate loss of the network output with respect to training labels
             loss = criterion(answer, batch.label)
