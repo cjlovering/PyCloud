@@ -91,4 +91,5 @@ if __name__ == '__main__':
     for task in tasks:
         task_title, model_class, train = task
         result = eval.train(args, model_class, train)
-        print("{}, {}".format(task_title, result)) # TODO: log or store results, etc
+        with open("results.csv", "a") as f:
+            f.write("{}, {}".format(task_title, result))
